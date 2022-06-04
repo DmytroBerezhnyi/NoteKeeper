@@ -19,7 +19,7 @@ class AddNoteActivity : AppCompatActivity() {
 
     private var isUpdate = false
     private var isNeeded = true
-    lateinit var note : Note
+    lateinit var note: Note
     var color = Color.argb(255, 255, 255, 255)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,9 +44,9 @@ class AddNoteActivity : AppCompatActivity() {
     private fun showMenu(view: View?) {
         val menu = PopupMenu(this, view)
         menu.setOnMenuItemClickListener {
-            if(it.itemId == R.id.delete) {
+            if (it.itemId == R.id.delete) {
                 delete()
-            } else if(it.itemId == R.id.clone) {
+            } else if (it.itemId == R.id.clone) {
                 clone()
             }
             false
@@ -56,26 +56,34 @@ class AddNoteActivity : AppCompatActivity() {
     }
 
     private fun clone() {
-        Thread(Runnable {
-            if(isUpdate) {
+        Thread {
+            if (isUpdate) {
                 NoteFragment.db = AppDatabase.getAppDataBase(context = this)
-                NoteFragment.db?.noteDao()?.insertNote(Note(note.title, note.text, note.color, note.lastChanged , note.created))
+                NoteFragment.db?.noteDao()?.insertNote(
+                    Note(
+                        note.title,
+                        note.text,
+                        note.color,
+                        note.lastChanged,
+                        note.created
+                    )
+                )
                 NoteFragment.db?.noteDao()?.insertNote(note)
             }
             isNeeded = false
             closeNoteWindow()
-        }).start()
+        }.start()
     }
 
     private fun delete() {
         Thread(Runnable {
-        if(isUpdate) {
-            NoteFragment.db = AppDatabase.getAppDataBase(context = this)
-            NoteFragment.db?.noteDao()?.deleteNote(note)
-        }
-        isNeeded = false
-        closeNoteWindow()
-    }).start()
+            if (isUpdate) {
+                NoteFragment.db = AppDatabase.getAppDataBase(context = this)
+                NoteFragment.db?.noteDao()?.deleteNote(note)
+            }
+            isNeeded = false
+            closeNoteWindow()
+        }).start()
     }
 
     private fun closeNoteWindow() {
@@ -91,7 +99,7 @@ class AddNoteActivity : AppCompatActivity() {
             val note = intent.getParcelableExtra<Note>("note")
             if (note != null) {
                 isUpdate = true
-                AddNoteActivity@this.note = note
+                AddNoteActivity@ this.note = note
                 tv_title.setText(note.title)
                 description.setText(note.text)
                 description.setSelection(description.text.length)
@@ -106,7 +114,7 @@ class AddNoteActivity : AppCompatActivity() {
         val size = Point()
         display.getSize(size)
 
-        if(size.x > size.y) {
+        if (size.x > size.y) {
             window.setLayout((size.x * 0.5).toInt(), (size.y * 0.5).toInt())
         } else {
             window.setLayout(size.x, (size.y * 0.5).toInt())
@@ -115,7 +123,7 @@ class AddNoteActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if(isNeeded) {
+        if (isNeeded) {
             Thread(Runnable {
                 NoteFragment.db = AppDatabase.getAppDataBase(context = this)
                 if (isUpdate) {
@@ -125,14 +133,15 @@ class AddNoteActivity : AppCompatActivity() {
                     note.lastChanged = System.currentTimeMillis()
                     NoteFragment.db?.noteDao()?.updateNote(note)
                 } else {
-                    if(tv_title.text.toString() != "" && description.text.toString() !="") {
+                    if (tv_title.text.toString() != "" && description.text.toString() != "") {
                         note = Note(tv_title.text.toString(), description.text.toString())
                         note.color = color
                         note.lastChanged = System.currentTimeMillis()
                         NoteFragment.db?.noteDao()?.insertNote(note)
                     } else {
                         runOnUiThread {
-                            Toast.makeText(this, "Пустая заметка была удалена", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Пустая заметка была удалена", Toast.LENGTH_SHORT)
+                                .show()
                         }
                     }
                 }

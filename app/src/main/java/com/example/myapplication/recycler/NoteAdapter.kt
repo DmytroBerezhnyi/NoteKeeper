@@ -9,9 +9,14 @@ import com.example.myapplication.R
 import com.example.myapplication.db.Note
 import com.example.myapplication.fragment.NoteFragment
 
-class NoteAdapter(val fragment : NoteFragment, val list: ArrayList<Note>) : RecyclerView.Adapter<NoteViewHolder>() {
+class NoteAdapter(val fragment: NoteFragment, val list: ArrayList<Note>) :
+    RecyclerView.Adapter<NoteViewHolder>() {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        NoteViewHolder(LayoutInflater.from(fragment.context).inflate(R.layout.note_item, parent, false), fragment)
+        NoteViewHolder(
+            LayoutInflater.from(fragment.context).inflate(R.layout.note_item, parent, false),
+            fragment
+        )
 
     override fun getItemCount() = list.size
 
